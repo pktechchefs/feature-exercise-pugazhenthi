@@ -17,7 +17,10 @@ class CreateItemOffersTable extends Migration
             $table->id();
             $table->foreignId('item_id');
             $table->integer('quantity');
-            $table->double('price', 12, 2);            
+            $table->double('price', 12, 2);
+            $table->foreignId('combo_item_id')->nullable();
+            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
+            $table->foreign('combo_item_id')->references('id')->on('items')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -79,5 +79,38 @@ class CartTest extends TestCase
         $amount = Cart::calculateAmount($item->id, 5);
         $this->assertEquals(88, $amount);        
     }
-   
+
+    public function test_an_item_can_have_combo_offer()
+    {
+        $this->withoutExceptionHandling();
+
+        $itemA = Item::factory()->create(['name' => 'A', 'price' => 50]);
+
+        $itemD = Item::factory()->create(['name' => 'D', 'price' => 15]);
+
+        ItemOffer::factory()->create([
+            'item_id' => $itemD->id,
+            'price'=> 5,
+            'quantity' => 1,
+            'combo_item_id' => $itemA->id
+        ]);
+
+        $this->post('cart', [
+            'item_id' => $itemA->id,
+            'price' => $itemA->price,
+            'quantity' => 6
+        ]);
+
+        $this->post('cart', [
+            'item_id' => $itemD->id,
+            'price' => $itemD->price,
+            'quantity' => 10
+        ]);
+
+        // if user buy 6 items of D then 6 time the offer price should be applied
+        $amount = Cart::calculateAmount($itemD->id, 10);
+        
+        $this->assertEquals(90, $amount);
+    }
+    
 }
