@@ -38,7 +38,6 @@ class CartTest extends TestCase
         $response->assertRedirect('cart');        
     }
 
-
     public function test_an_item_can_have_a_offer_and_special_price()
     {
         $this->withoutExceptionHandling();
@@ -53,21 +52,32 @@ class CartTest extends TestCase
 
         $amount = Cart::calculateAmount($item->id, 3);
 
-        $this->assertEquals(130, $amount);
-
-        // $response = $this->post('cart', [
-        //     'item_id' => $item->id,
-        //     'price' => $item->price,
-        //     'quantity' => 3
-        // ]);
-
-        // $this->assertDatabaseHas('carts', [
-        //     'price' => 50,
-        //     'amount' => 130,
-        //     'quantity' => 3
-        // ]);
-
-        // $response->assertRedirect('cart');        
+        $this->assertEquals(130, $amount);        
     }
-    
+
+    public function test_an_item_can_have_multiple_offers()
+    {
+        $this->withoutExceptionHandling();
+
+        $item = Item::factory()->create(['name' => 'C', 'price' => 20]);
+
+        // if user buy 2 items price will be 38
+        ItemOffer::factory()->create([
+            'item_id' => $item->id,
+            'price'=> 38,
+            'quantity' => 2
+        ]);
+
+        // if user buy 3 items price will be 50
+        ItemOffer::factory()->create([
+            'item_id' => $item->id,
+            'price'=> 50,
+            'quantity' => 3
+        ]);
+
+        // if user buy 5 items price shoul be 38+50 = 88
+        $amount = Cart::calculateAmount($item->id, 5);
+        $this->assertEquals(88, $amount);        
+    }
+   
 }

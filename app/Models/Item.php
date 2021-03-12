@@ -11,6 +11,6 @@ class Item extends Model
 
     public function offers()
     {
-        return $this->hasMany(ItemOffer::class);
+        return $this->hasMany(ItemOffer::class)->orderBy('quantity', 'desc');
     }
 }

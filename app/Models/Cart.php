@@ -17,21 +17,26 @@ class Cart extends Model
         $item = Item::find($itemId);
         
         $itemPrice = 0;
+        
+        $totalQuantity = $quantity;
 
         if ($item->offers()->count())
         {
+
+            // item offers order should be desc by qty
             foreach ($item->offers as $offer)
             {
-                if ($quantity >= $offer->quantity) {
+                // offer should match the quanity based on condition
+                if ($quantity >= $offer->quantity) {                    
                     $itemPrice += $offer->price;
-                    $quantity -= $offer->quantity;                    
+                    $totalQuantity -= $offer->quantity;
                 }
             }
         }
 
-        if ($quantity > 0)
+        if ($totalQuantity > 0)
         {
-            $itemPrice = ($item->price * $quantity);
+            $itemPrice = ($item->price * $totalQuantity);
         }
 
         return $itemPrice;
