@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\Item;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\Models\Cart;
+use App\Models\Item;
+use App\Models\ItemOffer;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CartTest extends TestCase
 {
@@ -34,6 +36,38 @@ class CartTest extends TestCase
         ]);
 
         $response->assertRedirect('cart');        
+    }
+
+
+    public function test_an_item_can_have_a_offer_and_special_price()
+    {
+        $this->withoutExceptionHandling();
+
+        $item = Item::factory()->create(['name' => 'A', 'price' => 50]);
+
+        ItemOffer::factory()->create([
+            'item_id' => $item->id,
+            'price'=> 130,
+            'quantity' => 3
+        ]);
+
+        $amount = Cart::calculateAmount($item->id, 3);
+
+        $this->assertEquals(130, $amount);
+
+        // $response = $this->post('cart', [
+        //     'item_id' => $item->id,
+        //     'price' => $item->price,
+        //     'quantity' => 3
+        // ]);
+
+        // $this->assertDatabaseHas('carts', [
+        //     'price' => 50,
+        //     'amount' => 130,
+        //     'quantity' => 3
+        // ]);
+
+        // $response->assertRedirect('cart');        
     }
     
 }

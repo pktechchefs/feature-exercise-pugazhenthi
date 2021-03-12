@@ -20,7 +20,7 @@
                         <th>Price</th>
                         <th>Special Price</th>
                     </tr>
-                    @foreach($cartItems as $item)
+                    @foreach($items as $item)
                     <tr>
                         <td>{{ $item->quantity }}</td>
                         <td>{{ $item->price }}</td>

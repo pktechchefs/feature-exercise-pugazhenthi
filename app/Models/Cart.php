@@ -12,10 +12,28 @@ class Cart extends Model
     protected $guarded = [];
 
 
-    public static function calculateAmount($data)
+    public static function calculateAmount($itemId, $quantity)
     {
+        $item = Item::find($itemId);
+        
+        $itemPrice = 0;
 
-        return $data['price'] * $data['quantity'];
+        if ($item->offers()->count())
+        {
+            foreach ($item->offers as $offer)
+            {
+                if ($quantity >= $offer->quantity) {
+                    $itemPrice += $offer->price;
+                    $quantity -= $offer->quantity;                    
+                }
+            }
+        }
 
+        if ($quantity > 0)
+        {
+            $itemPrice = ($item->price * $quantity);
+        }
+
+        return $itemPrice;
     }
 }
