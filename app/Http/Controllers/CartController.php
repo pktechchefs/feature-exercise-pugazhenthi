@@ -14,7 +14,11 @@ class CartController extends Controller
 
     public function store()
     {
-        Cart::create(request()->all());
+        $data = request()->only(['item_id', 'quantity', 'price']);
+        
+        $data['amount'] = Cart::calculateAmount($data);
+
+        Cart::create($data);
 
         return redirect('cart');
     }

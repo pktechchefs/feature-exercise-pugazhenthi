@@ -20,14 +20,20 @@ class CartTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $item = Item::factory()->create();
+        $item = Item::factory()->create(['price' => 50]);
 
         $response = $this->post('cart', [
             'item_id' => $item->id,
             'price' => $item->price,
-            'quantity' => 1
+            'quantity' => 2
+        ]);
+
+        $this->assertDatabaseHas('carts', [
+            'price' => 50,
+            'amount' => 100,
         ]);
 
         $response->assertRedirect('cart');        
     }
+    
 }
